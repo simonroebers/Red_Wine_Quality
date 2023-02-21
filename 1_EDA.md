@@ -1,5 +1,9 @@
 1_EDA
 ================
+Simon Roebers
+
+- <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load
+  packages and data</a>
 
 # Load packages and data
 
