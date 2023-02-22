@@ -1,0 +1,80 @@
+---
+title: "1_EDA"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
+
+# Load packages and data
+```{r include=FALSE}
+library(tidymodels)
+library(skimr)
+library(corrplot)
+```
+
+```{r}
+df <- read.csv('Hotel Reservations.csv')
+glimpse(df)
+```
+
+# Summary Statistics
+```{r}
+df |> skim()
+```
+
+- Data set is already clean
+- The 4 categorical features are transformed to factor variables next
+
+# Change feature formats
+```{r}
+df$type_of_meal_plan <- factor(df$type_of_meal_plan)
+df$room_type_reserved <- factor(df$room_type_reserved)
+df$market_segment_type <- factor(df$market_segment_type)
+df$booking_status <- factor(df$booking_status)
+df$booking_canceled <- ifelse(df$booking_status == 'Canceled', 1, 0)
+```
+
+
+# Correlations
+```{r}
+df |> select(where(is.numeric)) |> cor() |> 
+  corrplot(method = "color", type = "upper", diag = FALSE, tl.cex = 0.8)
+```
+
+- The lead time seems to positively affect whether a booking is canceled
+- The number of special requests seems to have a negative influence
+
+
+# Explore some features
+
+## Lead time and booking status
+```{r}
+ggplot(df, aes(x = lead_time, fill = booking_status)) +
+  geom_density(alpha = 0.5) +
+  theme_bw(base_size = 14)
+```
+
+- Reservations shortly bookied before arrival are canceled a lot less
+
+## Number of special requests
+```{r}
+ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_status)) +
+  geom_violin(alpha = 0.5) +
+  guides(fill="none") +
+  theme_bw(base_size = 14)
+```
+
+- Differences to the booking status depending on the special requests
+- Not cancelled have more special requests
+
+## Number of adults
+```{r}
+ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) + 
+  geom_histogram(bins = 5, position='dodge') +
+  theme_bw(base_size = 14)
+```
+
+- Most bookings are by two adults
+- Online reservations are most frequent, followed by offline
+- Corporate customers mostly come alone
