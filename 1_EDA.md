@@ -20,6 +20,35 @@
 # Load packages and data
 
 ``` r
+library(tidymodels)
+```
+
+    ## ── Attaching packages ────────────────────────────────────── tidymodels 1.0.0 ──
+
+    ## ✔ broom        1.0.3     ✔ recipes      1.0.4
+    ## ✔ dials        1.1.0     ✔ rsample      1.1.1
+    ## ✔ dplyr        1.1.0     ✔ tibble       3.1.8
+    ## ✔ ggplot2      3.4.1     ✔ tidyr        1.3.0
+    ## ✔ infer        1.0.4     ✔ tune         1.0.1
+    ## ✔ modeldata    1.1.0     ✔ workflows    1.1.2
+    ## ✔ parsnip      1.0.3     ✔ workflowsets 1.0.0
+    ## ✔ purrr        1.0.1     ✔ yardstick    1.1.0
+
+    ## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+    ## ✖ purrr::discard() masks scales::discard()
+    ## ✖ dplyr::filter()  masks stats::filter()
+    ## ✖ dplyr::lag()     masks stats::lag()
+    ## ✖ recipes::step()  masks stats::step()
+    ## • Search for functions across packages at https://www.tidymodels.org/find/
+
+``` r
+library(skimr)
+library(corrplot)
+```
+
+    ## corrplot 0.92 loaded
+
+``` r
 df <- read.csv('Hotel Reservations.csv')
 glimpse(df)
 ```

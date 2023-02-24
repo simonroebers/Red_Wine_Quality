@@ -7,7 +7,7 @@ output:
 ---
 
 # Load packages and data
-```{r include=FALSE}
+```{r}
 library(tidymodels)
 library(skimr)
 library(corrplot)
