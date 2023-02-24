@@ -1,3 +1,3 @@
 # Work in Progress
 
-Link to dataset: https://www.kaggle.com/datasets/deepcontractor/car-price-prediction-challenge
+Link to dataset: https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009
