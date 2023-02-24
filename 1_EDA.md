@@ -5,13 +5,10 @@
   packages and data</a>
 - <a href="#summary-statistics" id="toc-summary-statistics">Summary
   Statistics</a>
-- <a href="#change-feature-formats" id="toc-change-feature-formats">Change
-  feature formats</a>
 - <a href="#correlations" id="toc-correlations">Correlations</a>
 - <a href="#explore-some-features" id="toc-explore-some-features">Explore
   some features</a>
-  - <a href="#lead-time-and-booking-status"
-    id="toc-lead-time-and-booking-status">Lead time and booking status</a>
+  - <a href="#wine-quality" id="toc-wine-quality">Wine Quality</a>
   - <a href="#number-of-special-requests"
     id="toc-number-of-special-requests">Number of special requests</a>
   - <a href="#number-of-adults" id="toc-number-of-adults">Number of
@@ -42,31 +39,24 @@ library(corrplot)
 
 ``` r
 library(dagitty)
-df <- read.csv('Hotel Reservations.csv')
+df <- read.csv('winequality-red.csv')
 glimpse(df)
 ```
 
-    ## Rows: 36,275
-    ## Columns: 19
-    ## $ Booking_ID                           <chr> "INN00001", "INN00002", "INN00003…
-    ## $ no_of_adults                         <int> 2, 2, 1, 2, 2, 2, 2, 2, 3, 2, 1, …
-    ## $ no_of_children                       <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ no_of_weekend_nights                 <int> 1, 2, 2, 0, 1, 0, 1, 1, 0, 0, 1, …
-    ## $ no_of_week_nights                    <int> 2, 3, 1, 2, 1, 2, 3, 3, 4, 5, 0, …
-    ## $ type_of_meal_plan                    <chr> "Meal Plan 1", "Not Selected", "M…
-    ## $ required_car_parking_space           <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ room_type_reserved                   <chr> "Room_Type 1", "Room_Type 1", "Ro…
-    ## $ lead_time                            <int> 224, 5, 1, 211, 48, 346, 34, 83, …
-    ## $ arrival_year                         <int> 2017, 2018, 2018, 2018, 2018, 201…
-    ## $ arrival_month                        <int> 10, 11, 2, 5, 4, 9, 10, 12, 7, 10…
-    ## $ arrival_date                         <int> 2, 6, 28, 20, 11, 13, 15, 26, 6, …
-    ## $ market_segment_type                  <chr> "Offline", "Online", "Online", "O…
-    ## $ repeated_guest                       <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ no_of_previous_cancellations         <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ no_of_previous_bookings_not_canceled <int> 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
-    ## $ avg_price_per_room                   <dbl> 65.00, 106.68, 60.00, 100.00, 94.…
-    ## $ no_of_special_requests               <int> 0, 1, 0, 0, 0, 1, 1, 1, 1, 3, 0, …
-    ## $ booking_status                       <chr> "Not_Canceled", "Not_Canceled", "…
+    ## Rows: 1,599
+    ## Columns: 12
+    ## $ fixed.acidity        <dbl> 7.4, 7.8, 7.8, 11.2, 7.4, 7.4, 7.9, 7.3, 7.8, 7.5…
+    ## $ volatile.acidity     <dbl> 0.700, 0.880, 0.760, 0.280, 0.700, 0.660, 0.600, …
+    ## $ citric.acid          <dbl> 0.00, 0.00, 0.04, 0.56, 0.00, 0.00, 0.06, 0.00, 0…
+    ## $ residual.sugar       <dbl> 1.9, 2.6, 2.3, 1.9, 1.9, 1.8, 1.6, 1.2, 2.0, 6.1,…
+    ## $ chlorides            <dbl> 0.076, 0.098, 0.092, 0.075, 0.076, 0.075, 0.069, …
+    ## $ free.sulfur.dioxide  <dbl> 11, 25, 15, 17, 11, 13, 15, 15, 9, 17, 15, 17, 16…
+    ## $ total.sulfur.dioxide <dbl> 34, 67, 54, 60, 34, 40, 59, 21, 18, 102, 65, 102,…
+    ## $ density              <dbl> 0.9978, 0.9968, 0.9970, 0.9980, 0.9978, 0.9978, 0…
+    ## $ pH                   <dbl> 3.51, 3.20, 3.26, 3.16, 3.51, 3.51, 3.30, 3.39, 3…
+    ## $ sulphates            <dbl> 0.56, 0.68, 0.65, 0.58, 0.56, 0.56, 0.46, 0.47, 0…
+    ## $ alcohol              <dbl> 9.4, 9.8, 9.8, 9.8, 9.4, 9.4, 9.4, 10.0, 9.5, 10.…
+    ## $ quality              <int> 5, 5, 5, 6, 5, 5, 5, 7, 7, 5, 5, 5, 5, 5, 5, 5, 7…
 
 # Summary Statistics
 
@@ -74,61 +64,38 @@ glimpse(df)
 df |> skim()
 ```
 
-|                                                  |       |
-|:-------------------------------------------------|:------|
-| Name                                             | df    |
-| Number of rows                                   | 36275 |
-| Number of columns                                | 19    |
-| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_   |       |
-| Column type frequency:                           |       |
-| character                                        | 5     |
-| numeric                                          | 14    |
-| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ |       |
-| Group variables                                  | None  |
+|                                                  |      |
+|:-------------------------------------------------|:-----|
+| Name                                             | df   |
+| Number of rows                                   | 1599 |
+| Number of columns                                | 12   |
+| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_   |      |
+| Column type frequency:                           |      |
+| numeric                                          | 12   |
+| \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ |      |
+| Group variables                                  | None |
 
 Data summary
 
-**Variable type: character**
-
-| skim_variable       | n_missing | complete_rate | min | max | empty | n_unique | whitespace |
-|:--------------------|----------:|--------------:|----:|----:|------:|---------:|-----------:|
-| Booking_ID          |         0 |             1 |   8 |   8 |     0 |    36275 |          0 |
-| type_of_meal_plan   |         0 |             1 |  11 |  12 |     0 |        4 |          0 |
-| room_type_reserved  |         0 |             1 |  11 |  11 |     0 |        7 |          0 |
-| market_segment_type |         0 |             1 |   6 |  13 |     0 |        5 |          0 |
-| booking_status      |         0 |             1 |   8 |  12 |     0 |        2 |          0 |
-
 **Variable type: numeric**
 
-| skim_variable                        | n_missing | complete_rate |    mean |    sd |   p0 |    p25 |     p50 |  p75 | p100 | hist  |
-|:-------------------------------------|----------:|--------------:|--------:|------:|-----:|-------:|--------:|-----:|-----:|:------|
-| no_of_adults                         |         0 |             1 |    1.84 |  0.52 |    0 |    2.0 |    2.00 |    2 |    4 | ▁▂▇▁▁ |
-| no_of_children                       |         0 |             1 |    0.11 |  0.40 |    0 |    0.0 |    0.00 |    0 |   10 | ▇▁▁▁▁ |
-| no_of_weekend_nights                 |         0 |             1 |    0.81 |  0.87 |    0 |    0.0 |    1.00 |    2 |    7 | ▇▃▁▁▁ |
-| no_of_week_nights                    |         0 |             1 |    2.20 |  1.41 |    0 |    1.0 |    2.00 |    3 |   17 | ▇▁▁▁▁ |
-| required_car_parking_space           |         0 |             1 |    0.03 |  0.17 |    0 |    0.0 |    0.00 |    0 |    1 | ▇▁▁▁▁ |
-| lead_time                            |         0 |             1 |   85.23 | 85.93 |    0 |   17.0 |   57.00 |  126 |  443 | ▇▃▁▁▁ |
-| arrival_year                         |         0 |             1 | 2017.82 |  0.38 | 2017 | 2018.0 | 2018.00 | 2018 | 2018 | ▂▁▁▁▇ |
-| arrival_month                        |         0 |             1 |    7.42 |  3.07 |    1 |    5.0 |    8.00 |   10 |   12 | ▃▃▅▆▇ |
-| arrival_date                         |         0 |             1 |   15.60 |  8.74 |    1 |    8.0 |   16.00 |   23 |   31 | ▇▇▇▆▆ |
-| repeated_guest                       |         0 |             1 |    0.03 |  0.16 |    0 |    0.0 |    0.00 |    0 |    1 | ▇▁▁▁▁ |
-| no_of_previous_cancellations         |         0 |             1 |    0.02 |  0.37 |    0 |    0.0 |    0.00 |    0 |   13 | ▇▁▁▁▁ |
-| no_of_previous_bookings_not_canceled |         0 |             1 |    0.15 |  1.75 |    0 |    0.0 |    0.00 |    0 |   58 | ▇▁▁▁▁ |
-| avg_price_per_room                   |         0 |             1 |  103.42 | 35.09 |    0 |   80.3 |   99.45 |  120 |  540 | ▇▅▁▁▁ |
-| no_of_special_requests               |         0 |             1 |    0.62 |  0.79 |    0 |    0.0 |    0.00 |    1 |    5 | ▇▁▁▁▁ |
+| skim_variable        | n_missing | complete_rate |  mean |    sd |   p0 |   p25 |   p50 |   p75 |   p100 | hist  |
+|:---------------------|----------:|--------------:|------:|------:|-----:|------:|------:|------:|-------:|:------|
+| fixed.acidity        |         0 |             1 |  8.32 |  1.74 | 4.60 |  7.10 |  7.90 |  9.20 |  15.90 | ▂▇▂▁▁ |
+| volatile.acidity     |         0 |             1 |  0.53 |  0.18 | 0.12 |  0.39 |  0.52 |  0.64 |   1.58 | ▅▇▂▁▁ |
+| citric.acid          |         0 |             1 |  0.27 |  0.19 | 0.00 |  0.09 |  0.26 |  0.42 |   1.00 | ▇▆▅▁▁ |
+| residual.sugar       |         0 |             1 |  2.54 |  1.41 | 0.90 |  1.90 |  2.20 |  2.60 |  15.50 | ▇▁▁▁▁ |
+| chlorides            |         0 |             1 |  0.09 |  0.05 | 0.01 |  0.07 |  0.08 |  0.09 |   0.61 | ▇▁▁▁▁ |
+| free.sulfur.dioxide  |         0 |             1 | 15.87 | 10.46 | 1.00 |  7.00 | 14.00 | 21.00 |  72.00 | ▇▅▁▁▁ |
+| total.sulfur.dioxide |         0 |             1 | 46.47 | 32.90 | 6.00 | 22.00 | 38.00 | 62.00 | 289.00 | ▇▂▁▁▁ |
+| density              |         0 |             1 |  1.00 |  0.00 | 0.99 |  1.00 |  1.00 |  1.00 |   1.00 | ▁▃▇▂▁ |
+| pH                   |         0 |             1 |  3.31 |  0.15 | 2.74 |  3.21 |  3.31 |  3.40 |   4.01 | ▁▅▇▂▁ |
+| sulphates            |         0 |             1 |  0.66 |  0.17 | 0.33 |  0.55 |  0.62 |  0.73 |   2.00 | ▇▅▁▁▁ |
+| alcohol              |         0 |             1 | 10.42 |  1.07 | 8.40 |  9.50 | 10.20 | 11.10 |  14.90 | ▇▇▃▁▁ |
+| quality              |         0 |             1 |  5.64 |  0.81 | 3.00 |  5.00 |  6.00 |  6.00 |   8.00 | ▁▇▇▂▁ |
 
 - Data set is already clean
-- The 4 categorical features are transformed to factor variables next
-
-# Change feature formats
-
-``` r
-df$type_of_meal_plan <- factor(df$type_of_meal_plan)
-df$room_type_reserved <- factor(df$room_type_reserved)
-df$market_segment_type <- factor(df$market_segment_type)
-df$booking_status <- factor(df$booking_status)
-df$booking_canceled <- ifelse(df$booking_status == 'Canceled', 1, 0)
-```
+- Features are all numeric
 
 # Correlations
 
@@ -137,35 +104,33 @@ df |> select(where(is.numeric)) |> cor() |>
   corrplot(method = "color", type = "upper", diag = FALSE, tl.cex = 0.8)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-- The lead time seems to positively affect whether a booking is canceled
-- The number of special requests seems to have a negative influence
+- Alcohol and sulphates appear to positively correlate with the quality
+- The volatile acidity seems to have a negative correlation
 
 # Explore some features
 
-## Lead time and booking status
+## Wine Quality
 
 ``` r
-ggplot(df, aes(x = lead_time, fill = booking_status)) +
-  geom_density(alpha = 0.5) +
-  theme_bw(base_size = 14)
+ggplot(df, aes(x = quality)) +
+  geom_histogram(bins = 6) +
+theme_bw(base_size = 14)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 - Reservations shortly bookied before arrival are canceled a lot less
 
 ## Number of special requests
 
 ``` r
-ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_status)) +
-  geom_violin(alpha = 0.5) +
-  guides(fill="none") +
-  theme_bw(base_size = 14)
+# ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_status)) +
+#   geom_violin(alpha = 0.5) +
+#   guides(fill="none") +
+#   theme_bw(base_size = 14)
 ```
-
-![](1_EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 - Differences to the booking status depending on the special requests
 - Not cancelled have more special requests
@@ -173,12 +138,10 @@ ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_s
 ## Number of adults
 
 ``` r
-ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) + 
-  geom_histogram(bins = 5, position='dodge') +
-  theme_bw(base_size = 14)
+# ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) + 
+#   geom_histogram(bins = 5, position='dodge') +
+#   theme_bw(base_size = 14)
 ```
-
-![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 - Most bookings are by two adults
 - Online reservations are most frequent, followed by offline
@@ -202,4 +165,4 @@ No_of_adults -> Lead_time
 plot(graphLayout(dag))
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->

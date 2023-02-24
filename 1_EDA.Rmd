@@ -12,7 +12,7 @@ library(tidyverse)
 library(skimr)
 library(corrplot)
 library(dagitty)
-df <- read.csv('Hotel Reservations.csv')
+df <- read.csv('winequality-red.csv')
 glimpse(df)
 ```
 
@@ -22,15 +22,11 @@ df |> skim()
 ```
 
 - Data set is already clean
-- The 4 categorical features are transformed to factor variables next
+- Features are all numeric
 
-# Change feature formats
+# Create features
 ```{r}
-df$type_of_meal_plan <- factor(df$type_of_meal_plan)
-df$room_type_reserved <- factor(df$room_type_reserved)
-df$market_segment_type <- factor(df$market_segment_type)
-df$booking_status <- factor(df$booking_status)
-df$booking_canceled <- ifelse(df$booking_status == 'Canceled', 1, 0)
+df$quality_fct <- as.factor(df$quality)
 ```
 
 
@@ -40,43 +36,61 @@ df |> select(where(is.numeric)) |> cor() |>
   corrplot(method = "color", type = "upper", diag = FALSE, tl.cex = 0.8)
 ```
 
-- The lead time seems to positively affect whether a booking is canceled
-- The number of special requests seems to have a negative influence
+- Alcohol, sulphates, and citric acid appear to positively correlate with the quality
+- The volatile acidity seems to have a negative correlation
 
 
 # Explore some features
 
-## Lead time and booking status
+## Wine Quality
 ```{r}
-ggplot(df, aes(x = lead_time, fill = booking_status)) +
-  geom_density(alpha = 0.5) +
-  theme_bw(base_size = 14)
+ggplot() +
+  geom_histogram(data = df, aes(x = quality), bins = 6, color = 'black', 
+                 fill = 'white') +
+theme_bw(base_size = 14)
 ```
 
-- Reservations shortly bookied before arrival are canceled a lot less
+- The outcome variable is very unbalanced
+- Wine quality is largely 5 and 6
 
-## Number of special requests
+## Alcohol
 ```{r}
-ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_status)) +
+ggplot(df, aes(x = alcohol, fill = quality_fct)) +
+  geom_density(alpha = 0.5) +
+theme_bw(base_size = 14)
+```
+
+- The level of alcohol is greater with higher quality
+
+
+## Volatile acidity
+```{r}
+ggplot(df, aes(x = quality_fct, y = volatile.acidity, fill = quality_fct)) +
   geom_violin(alpha = 0.5) +
   guides(fill="none") +
   theme_bw(base_size = 14)
 ```
 
-- Differences to the booking status depending on the special requests
-- Not cancelled have more special requests
+- The aciditiy of higher quality wines is less volatile
 
-## Number of adults
+## Sulphates
 ```{r}
-ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) + 
-  geom_histogram(bins = 5, position='dodge') +
+ggplot(df, aes(x = quality_fct,  y = sulphates, color = quality_fct)) +
+  geom_point(position = position_dodge2(w = 0.75)) +
   theme_bw(base_size = 14)
 ```
 
-- Most bookings are by two adults
-- Online reservations are most frequent, followed by offline
-- Corporate customers mostly come alone
+- Higher quality wine tends to have on average more sulphates
 
+# Citric acid
+```{r}
+ggplot(df, aes(x = citric.acid,  y = quality_fct, color = quality_fct)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape = 2, size = 2, color = "black") +
+  theme_bw(base_size = 14)
+```
+
+- The same seems to hold true for the citric acid
 
 # DAG
 - Correlation does not equal causation
@@ -85,11 +99,10 @@ ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) +
 ```{r}
 dag <- dagitty('
 dag {
-Lead_time -> Booking_status
-No_of_special_requests -> Booking_status
-No_of_adults -> Booking_status
-No_of_adults -> No_of_special_requests
-No_of_adults -> Lead_time
+alcohol -> quality
+volatile.acidity -> quality
+sulphates -> quality
+citric.acid -> quality
 }
 ')
 plot(graphLayout(dag))
