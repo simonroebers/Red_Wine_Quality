@@ -5,14 +5,16 @@
   packages and data</a>
 - <a href="#summary-statistics" id="toc-summary-statistics">Summary
   Statistics</a>
+- <a href="#create-features" id="toc-create-features">Create features</a>
 - <a href="#correlations" id="toc-correlations">Correlations</a>
 - <a href="#explore-some-features" id="toc-explore-some-features">Explore
   some features</a>
   - <a href="#wine-quality" id="toc-wine-quality">Wine Quality</a>
-  - <a href="#number-of-special-requests"
-    id="toc-number-of-special-requests">Number of special requests</a>
-  - <a href="#number-of-adults" id="toc-number-of-adults">Number of
-    adults</a>
+  - <a href="#alcohol" id="toc-alcohol">Alcohol</a>
+  - <a href="#volatile-acidity" id="toc-volatile-acidity">Volatile
+    acidity</a>
+  - <a href="#sulphates" id="toc-sulphates">Sulphates</a>
+- <a href="#citric-acid" id="toc-citric-acid">Citric acid</a>
 - <a href="#dag" id="toc-dag">DAG</a>
 
 # Load packages and data
@@ -97,6 +99,12 @@ Data summary
 - Data set is already clean
 - Features are all numeric
 
+# Create features
+
+``` r
+df$quality_fct <- as.factor(df$quality)
+```
+
 # Correlations
 
 ``` r
@@ -104,9 +112,10 @@ df |> select(where(is.numeric)) |> cor() |>
   corrplot(method = "color", type = "upper", diag = FALSE, tl.cex = 0.8)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
-- Alcohol and sulphates appear to positively correlate with the quality
+- Alcohol, sulphates, and citric acid appear to positively correlate
+  with the quality
 - The volatile acidity seems to have a negative correlation
 
 # Explore some features
@@ -114,38 +123,66 @@ df |> select(where(is.numeric)) |> cor() |>
 ## Wine Quality
 
 ``` r
-ggplot(df, aes(x = quality)) +
-  geom_histogram(bins = 6) +
+ggplot() +
+  geom_histogram(data = df, aes(x = quality), bins = 6, color = 'black', 
+                 fill = 'white') +
 theme_bw(base_size = 14)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
-- Reservations shortly bookied before arrival are canceled a lot less
+- The outcome variable is very unbalanced
+- Wine quality is largely 5 and 6
 
-## Number of special requests
-
-``` r
-# ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_status)) +
-#   geom_violin(alpha = 0.5) +
-#   guides(fill="none") +
-#   theme_bw(base_size = 14)
-```
-
-- Differences to the booking status depending on the special requests
-- Not cancelled have more special requests
-
-## Number of adults
+## Alcohol
 
 ``` r
-# ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) + 
-#   geom_histogram(bins = 5, position='dodge') +
-#   theme_bw(base_size = 14)
+ggplot(df, aes(x = alcohol, fill = quality_fct)) +
+  geom_density(alpha = 0.5) +
+theme_bw(base_size = 14)
 ```
 
-- Most bookings are by two adults
-- Online reservations are most frequent, followed by offline
-- Corporate customers mostly come alone
+![](1_EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+- The level of alcohol is greater with higher quality
+
+## Volatile acidity
+
+``` r
+ggplot(df, aes(x = quality_fct, y = volatile.acidity, fill = quality_fct)) +
+  geom_violin(alpha = 0.5) +
+  guides(fill="none") +
+  theme_bw(base_size = 14)
+```
+
+![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+- The aciditiy of higher quality wines is less volatile
+
+## Sulphates
+
+``` r
+ggplot(df, aes(x = quality_fct,  y = sulphates, color = quality_fct)) +
+  geom_point(position = position_dodge2(w = 0.75)) +
+  theme_bw(base_size = 14)
+```
+
+![](1_EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+- Higher quality wine tends to have on average more sulphates
+
+# Citric acid
+
+``` r
+ggplot(df, aes(x = citric.acid,  y = quality_fct, color = quality_fct)) +
+  geom_boxplot() +
+  stat_summary(fun = "mean", geom = "point", shape = 2, size = 2, color = "black") +
+  theme_bw(base_size = 14)
+```
+
+![](1_EDA_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+- The same seems to hold true for the citric acid
 
 # DAG
 
@@ -155,14 +192,13 @@ theme_bw(base_size = 14)
 ``` r
 dag <- dagitty('
 dag {
-Lead_time -> Booking_status
-No_of_special_requests -> Booking_status
-No_of_adults -> Booking_status
-No_of_adults -> No_of_special_requests
-No_of_adults -> Lead_time
+alcohol -> quality
+volatile.acidity -> quality
+sulphates -> quality
+citric.acid -> quality
 }
 ')
 plot(graphLayout(dag))
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
