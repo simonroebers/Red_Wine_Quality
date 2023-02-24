@@ -8,12 +8,10 @@ output:
 
 # Load packages and data
 ```{r}
-library(tidymodels)
+library(tidyverse)
 library(skimr)
 library(corrplot)
-```
-
-```{r}
+library(dagitty)
 df <- read.csv('Hotel Reservations.csv')
 glimpse(df)
 ```
@@ -78,3 +76,22 @@ ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) +
 - Most bookings are by two adults
 - Online reservations are most frequent, followed by offline
 - Corporate customers mostly come alone
+
+
+# DAG
+- Correlation does not equal causation
+- Similarities are assumed here for ease of application
+
+```{r}
+dag <- dagitty('
+dag {
+Lead_time -> Booking_status
+No_of_special_requests -> Booking_status
+No_of_adults -> Booking_status
+No_of_adults -> No_of_special_requests
+No_of_adults -> Lead_time
+}
+')
+plot(graphLayout(dag))
+```
+

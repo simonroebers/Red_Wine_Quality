@@ -16,30 +16,22 @@
     id="toc-number-of-special-requests">Number of special requests</a>
   - <a href="#number-of-adults" id="toc-number-of-adults">Number of
     adults</a>
+- <a href="#dag" id="toc-dag">DAG</a>
 
 # Load packages and data
 
 ``` r
-library(tidymodels)
+library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────────── tidymodels 1.0.0 ──
-
-    ## ✔ broom        1.0.3     ✔ recipes      1.0.4
-    ## ✔ dials        1.1.0     ✔ rsample      1.1.1
-    ## ✔ dplyr        1.1.0     ✔ tibble       3.1.8
-    ## ✔ ggplot2      3.4.1     ✔ tidyr        1.3.0
-    ## ✔ infer        1.0.4     ✔ tune         1.0.1
-    ## ✔ modeldata    1.1.0     ✔ workflows    1.1.2
-    ## ✔ parsnip      1.0.3     ✔ workflowsets 1.0.0
-    ## ✔ purrr        1.0.1     ✔ yardstick    1.1.0
-
-    ## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
-    ## ✖ purrr::discard() masks scales::discard()
-    ## ✖ dplyr::filter()  masks stats::filter()
-    ## ✖ dplyr::lag()     masks stats::lag()
-    ## ✖ recipes::step()  masks stats::step()
-    ## • Search for functions across packages at https://www.tidymodels.org/find/
+    ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+    ## ✔ ggplot2 3.4.1     ✔ purrr   1.0.1
+    ## ✔ tibble  3.1.8     ✔ dplyr   1.1.0
+    ## ✔ tidyr   1.3.0     ✔ stringr 1.5.0
+    ## ✔ readr   2.1.4     ✔ forcats 1.0.0
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
 
 ``` r
 library(skimr)
@@ -49,6 +41,7 @@ library(corrplot)
     ## corrplot 0.92 loaded
 
 ``` r
+library(dagitty)
 df <- read.csv('Hotel Reservations.csv')
 glimpse(df)
 ```
@@ -144,7 +137,7 @@ df |> select(where(is.numeric)) |> cor() |>
   corrplot(method = "color", type = "upper", diag = FALSE, tl.cex = 0.8)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 - The lead time seems to positively affect whether a booking is canceled
 - The number of special requests seems to have a negative influence
@@ -159,7 +152,7 @@ ggplot(df, aes(x = lead_time, fill = booking_status)) +
   theme_bw(base_size = 14)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 - Reservations shortly bookied before arrival are canceled a lot less
 
@@ -172,7 +165,7 @@ ggplot(df, aes(x = no_of_special_requests, y = booking_status,  fill = booking_s
   theme_bw(base_size = 14)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 - Differences to the booking status depending on the special requests
 - Not cancelled have more special requests
@@ -185,8 +178,28 @@ ggplot(df, aes(x = no_of_adults,  fill = market_segment_type)) +
   theme_bw(base_size = 14)
 ```
 
-![](1_EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](1_EDA_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 - Most bookings are by two adults
 - Online reservations are most frequent, followed by offline
 - Corporate customers mostly come alone
+
+# DAG
+
+- Correlation does not equal causation
+- Similarities are assumed here for ease of application
+
+``` r
+dag <- dagitty('
+dag {
+Lead_time -> Booking_status
+No_of_special_requests -> Booking_status
+No_of_adults -> Booking_status
+No_of_adults -> No_of_special_requests
+No_of_adults -> Lead_time
+}
+')
+plot(graphLayout(dag))
+```
+
+![](1_EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
