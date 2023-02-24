@@ -1,0 +1,15 @@
+---
+title: "2_OLS_Model"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
+
+# Load packages and data
+```{r}
+library(tidyverse)
+library(stargazer)
+df <- read.csv('Hotel Reservations.csv')
+glimpse(df)
+```
