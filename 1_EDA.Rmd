@@ -82,7 +82,7 @@ ggplot(df, aes(x = quality_fct,  y = sulphates, color = quality_fct)) +
 
 - Higher quality wine tends to have on average more sulphates
 
-# Citric acid
+## Citric acid
 ```{r}
 ggplot(df, aes(x = citric.acid,  y = quality_fct, color = quality_fct)) +
   geom_boxplot() +
@@ -93,18 +93,22 @@ ggplot(df, aes(x = citric.acid,  y = quality_fct, color = quality_fct)) +
 - The same seems to hold true for the citric acid
 
 # DAG
-- Correlation does not equal causation
-- Similarities are assumed here for ease of application
 
 ```{r}
 dag <- dagitty('
 dag {
 alcohol -> quality
-volatile.acidity -> quality
 sulphates -> quality
+sulphates -> citric.acid
+volatile.acidity -> quality
 citric.acid -> quality
+citric.acid -> volatile.acidity
+citric.acid -> alcohol
 }
 ')
 plot(graphLayout(dag))
 ```
 
+- Correlation does not equal causation
+- Similarities are assumed here for ease of application
+- I don't have domain knowledge about wine, this is my best guess
