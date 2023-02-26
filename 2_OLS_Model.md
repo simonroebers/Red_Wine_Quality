@@ -4,6 +4,9 @@
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load
   packages and data</a>
 - <a href="#ols-models" id="toc-ols-models">OLS Models</a>
+- <a href="#standardized-regression-coefficients"
+  id="toc-standardized-regression-coefficients">Standardized Regression
+  Coefficients</a>
 
 # Load packages and data
 
@@ -31,6 +34,7 @@ library(stargazer)
     ##  R package version 5.2.3. https://CRAN.R-project.org/package=stargazer
 
 ``` r
+library(lm.beta)
 df <- read.csv('winequality-red.csv')
 glimpse(df)
 ```
@@ -108,3 +112,48 @@ stargazer(model1, model2, intercept.bottom=FALSE, type='text')
 - Model performance does however not increase meaningfully
 - Around 33 % of variation in quality can be described with these
   regressions
+
+# Standardized Regression Coefficients
+
+``` r
+summary(lm.beta(model2))
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = quality ~ alcohol + sulphates + citric.acid + volatile.acidity + 
+    ##     sulphates * citric.acid + citric.acid * alcohol + citric.acid * 
+    ##     volatile.acidity, data = df)
+    ## 
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.69486 -0.39041 -0.07031  0.44455  2.33952 
+    ## 
+    ## Coefficients:
+    ##                              Estimate Standardized Std. Error t value Pr(>|t|)
+    ## (Intercept)                   2.91935           NA    0.33141   8.809  < 2e-16
+    ## alcohol                       0.25100      0.33122    0.02671   9.397  < 2e-16
+    ## sulphates                     1.19283      0.25037    0.19217   6.207 6.87e-10
+    ## citric.acid                  -1.28281     -0.30944    0.96542  -1.329   0.1841
+    ## volatile.acidity             -1.23520     -0.27388    0.17745  -6.961 4.92e-12
+    ## sulphates:citric.acid        -1.32351     -0.26638    0.45660  -2.899   0.0038
+    ## alcohol:citric.acid           0.19401      0.51074    0.07556   2.568   0.0103
+    ## citric.acid:volatile.acidity  0.09955      0.01109    0.55140   0.181   0.8568
+    ##                                 
+    ## (Intercept)                  ***
+    ## alcohol                      ***
+    ## sulphates                    ***
+    ## citric.acid                     
+    ## volatile.acidity             ***
+    ## sulphates:citric.acid        ** 
+    ## alcohol:citric.acid          *  
+    ## citric.acid:volatile.acidity    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 0.6562 on 1591 degrees of freedom
+    ## Multiple R-squared:  0.3427, Adjusted R-squared:  0.3398 
+    ## F-statistic: 118.5 on 7 and 1591 DF,  p-value: < 2.2e-16
+
+- Standardizing coefficients allows for direct comparison of effect size
+- Alcohol seems to have the highest direct impact on quality

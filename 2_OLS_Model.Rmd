@@ -10,6 +10,7 @@ output:
 ```{r}
 library(tidyverse)
 library(stargazer)
+library(lm.beta)
 df <- read.csv('winequality-red.csv')
 glimpse(df)
 ```
@@ -28,3 +29,11 @@ stargazer(model1, model2, intercept.bottom=FALSE, type='text')
 - Second model indicates that interactions of citric acid with sulphates and alcohol are significant
 - Model performance does however not increase meaningfully
 - Around 33 % of variation in quality can be described with these regressions
+
+# Standardized Regression Coefficients
+```{r}
+summary(lm.beta(model2))
+```
+
+- Standardizing coefficients allows for direct comparison of effect size
+- Alcohol seems to have the highest direct impact on quality
