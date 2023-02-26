@@ -162,9 +162,13 @@ ggplot(df, aes(x = quality_fct, y = volatile.acidity, fill = quality_fct)) +
 ## Sulphates
 
 ``` r
-ggplot(df, aes(x = quality_fct,  y = sulphates, color = quality_fct)) +
-  geom_point(position = position_dodge2(w = 0.75)) +
-  theme_bw(base_size = 14)
+ggplot() +
+  geom_point(data=df, aes(x = quality,  y = sulphates, group = quality_fct, 
+    color = quality_fct),position = position_dodge2(w = 0.75)) +
+  geom_smooth(data=df, aes(x = quality,  y = sulphates),
+              method="lm", formula = y ~ x) +
+  theme_bw(base_size = 14) + 
+  scale_x_continuous(breaks = c(3:8))
 ```
 
 ![](1_EDA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
