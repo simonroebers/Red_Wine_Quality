@@ -10,6 +10,21 @@ output:
 ```{r}
 library(tidyverse)
 library(stargazer)
-df <- read.csv('Hotel Reservations.csv')
+df <- read.csv('winequality-red.csv')
 glimpse(df)
 ```
+
+# OLS Models
+```{r}
+model1 <- lm(quality ~ alcohol + sulphates + citric.acid + 
+  volatile.acidity, data=df)
+model2 <- lm(quality ~ alcohol + sulphates + citric.acid + volatile.acidity + 
+  sulphates*citric.acid + citric.acid*alcohol + citric.acid*volatile.acidity
+  , data=df)
+stargazer(model1, model2, intercept.bottom=FALSE, type='text')
+```
+
+- Base model without interaction effects shows that citric acid does not have a statistically significant impact on quality
+- Second model indicates that interactions of citric acid with sulphates and alcohol are significant
+- Model performance does however not increase meaningfully
+- Around 33 % of variation in quality can be described with these regressions
