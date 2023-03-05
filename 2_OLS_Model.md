@@ -1,4 +1,4 @@
-2_OLS_Model
+2 OLS Regression Model
 ================
 
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load
