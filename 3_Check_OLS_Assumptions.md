@@ -1,4 +1,4 @@
-3_Check_OLS_Assumptions
+3 Check OLS Assumptions
 ================
 
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load

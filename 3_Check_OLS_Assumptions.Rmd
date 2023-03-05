@@ -1,5 +1,5 @@
 ---
-title: "3_Check_OLS_Assumptions"
+title: "3 Check OLS Assumptions"
 output:
   github_document:
     toc: true
