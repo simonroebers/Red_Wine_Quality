@@ -66,10 +66,11 @@ stargazer(model2, model2,  se=list(seBasic, seWhite), intercept.bottom=FALSE, ty
 - Using White robust standard errors lowers significance of citric.acid interactions -> citric acid could potentially be excluded from the model, in case not much explanatory power is lost
 
 
+## Test simpler model
 ```{r}
-# Test simpler model
 model3 <- lm(quality ~ alcohol + sulphates +  volatile.acidity, data=df)
-stargazer(model3,intercept.bottom=FALSE, type="text")
+seWhite <- sqrt(diag(vcovHC(model3, type="HC0")))
+stargazer(model3, se=list(seWhite), intercept.bottom=FALSE, type="text")
 ```
 
 - Model barely loses R², but becomes much more simple

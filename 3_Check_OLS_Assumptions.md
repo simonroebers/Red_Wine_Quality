@@ -9,6 +9,8 @@
   - <a href="#check-normality" id="toc-check-normality">Check Normality</a>
   - <a href="#check-heteroskedasticity"
     id="toc-check-heteroskedasticity">Check Heteroskedasticity</a>
+  - <a href="#test-simpler-model" id="toc-test-simpler-model">Test simpler
+    model</a>
   - <a href="#check-multicollinearity"
     id="toc-check-multicollinearity">Check Multicollinearity</a>
 
@@ -270,10 +272,12 @@ stargazer(model2, model2,  se=list(seBasic, seWhite), intercept.bottom=FALSE, ty
   interactions -\> citric acid could potentially be excluded from the
   model, in case not much explanatory power is lost
 
+## Test simpler model
+
 ``` r
-# Test simpler model
 model3 <- lm(quality ~ alcohol + sulphates +  volatile.acidity, data=df)
-stargazer(model3,intercept.bottom=FALSE, type="text")
+seWhite <- sqrt(diag(vcovHC(model3, type="HC0")))
+stargazer(model3, se=list(seWhite), intercept.bottom=FALSE, type="text")
 ```
 
     ## 
@@ -283,16 +287,16 @@ stargazer(model3,intercept.bottom=FALSE, type="text")
     ##                               quality          
     ## -----------------------------------------------
     ## Constant                     2.611***          
-    ##                               (0.196)          
+    ##                               (0.217)          
     ##                                                
     ## alcohol                      0.309***          
-    ##                               (0.016)          
+    ##                               (0.018)          
     ##                                                
     ## sulphates                    0.679***          
-    ##                               (0.101)          
+    ##                               (0.126)          
     ##                                                
     ## volatile.acidity             -1.221***         
-    ##                               (0.097)          
+    ##                               (0.111)          
     ##                                                
     ## -----------------------------------------------
     ## Observations                   1,599           
