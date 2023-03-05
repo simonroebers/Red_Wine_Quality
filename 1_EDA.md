@@ -1,4 +1,4 @@
-1_EDA
+1 Exploratory Data Analysis
 ================
 
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load

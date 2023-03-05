@@ -1,5 +1,5 @@
 ---
-title: "1_EDA"
+title: "1 Exploratory Data Analysis"
 output:
   github_document:
     toc: true
