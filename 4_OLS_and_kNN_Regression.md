@@ -1,4 +1,4 @@
-4 OLS and kNN Prediction
+4 OLS and kNN Regression
 ================
 
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load
@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Learn how to get started at https://www.tidymodels.org/start/
+    ## • Use tidymodels_prefer() to resolve common conflicts.
 
 ``` r
 df <- read.csv('winequality-red.csv')
