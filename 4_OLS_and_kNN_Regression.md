@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Use tidymodels_prefer() to resolve common conflicts.
+    ## • Use suppressPackageStartupMessages() to eliminate package startup messages
 
 ``` r
 df <- read.csv('winequality-red.csv')
@@ -120,7 +120,7 @@ linear_model_workflow
 knn_model <- nearest_neighbor(neighbors = tune()) |> 
   set_mode("regression") |> set_engine("kknn")
 knn_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
-  data = df) |> step_normalize(quality, alcohol, sulphates, volatile.acidity)
+  data = df) |> step_normalize(all_predictors())
 knn_workflow <- workflow() |> add_model(knn_model) |> 
   add_recipe(knn_recipe)
 knn_workflow
@@ -179,11 +179,11 @@ knn_tune |> show_best("rmse", n = 5)
     ## # A tibble: 5 × 7
     ##   neighbors .metric .estimator  mean     n std_err .config              
     ##       <dbl> <chr>   <chr>      <dbl> <int>   <dbl> <chr>                
-    ## 1        26 rmse    standard   0.827     1      NA Preprocessor1_Model13
-    ## 2        24 rmse    standard   0.827     1      NA Preprocessor1_Model12
-    ## 3        30 rmse    standard   0.828     1      NA Preprocessor1_Model15
-    ## 4        28 rmse    standard   0.828     1      NA Preprocessor1_Model14
-    ## 5        32 rmse    standard   0.828     1      NA Preprocessor1_Model16
+    ## 1        26 rmse    standard   0.663     1      NA Preprocessor1_Model13
+    ## 2        24 rmse    standard   0.663     1      NA Preprocessor1_Model12
+    ## 3        30 rmse    standard   0.663     1      NA Preprocessor1_Model15
+    ## 4        28 rmse    standard   0.664     1      NA Preprocessor1_Model14
+    ## 5        32 rmse    standard   0.664     1      NA Preprocessor1_Model16
 
 ``` r
 knn_best_model <- select_best(knn_tune, metric = "rmse")
@@ -219,11 +219,10 @@ linear_model_metrics |> bind_rows(knn_metrics) |>
     ##   model                rmse   mae rsq_trad
     ##   <chr>               <dbl> <dbl>    <dbl>
     ## 1 linear regression   0.674 0.528    0.332
-    ## 2 k-nearest neighbors 0.823 0.651    0.362
+    ## 2 k-nearest neighbors 0.659 0.521    0.362
 
 - Models are applied to test data and resulting performances are
   compared
-- Linear regression model does smaller errors at predicting whine
-  quality
-- K-nearest neighbors can explain more variation of the dependent
-  variable
+- K-nearest neighbors is the better model
+  - Lower errors of predictions
+  - It can explain more variation of the dependent variable
