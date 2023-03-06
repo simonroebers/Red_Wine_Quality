@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Use suppressPackageStartupMessages() to eliminate package startup messages
+    ## • Dig deeper into tidy modeling with R at https://www.tmwr.org
 
 ``` r
 df <- read.csv('winequality-red.csv')
@@ -165,9 +165,8 @@ knn_tune_metrics <- knn_tune |> collect_metrics()
 
 ``` r
 knn_tune_metrics |> 
-  ggplot(aes(x = neighbors, y = mean)) + 
-  geom_point() + geom_line() + 
-  facet_wrap(~ .metric, scales = "free_y")
+  ggplot(aes(x = neighbors, y = mean, colour = .metric)) + geom_point() + 
+  geom_line() + facet_wrap(~ .metric, scales = "free_y")
 ```
 
 ![](4_OLS_and_kNN_Regression_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
