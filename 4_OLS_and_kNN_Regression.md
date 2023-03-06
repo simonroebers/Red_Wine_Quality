@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Dig deeper into tidy modeling with R at https://www.tmwr.org
+    ## • Use tidymodels_prefer() to resolve common conflicts.
 
 ``` r
 df <- read.csv('winequality-red.csv')
@@ -92,7 +92,7 @@ wine_test  <- testing(wine_split)
 ``` r
 linear_model <- linear_reg() |> set_engine("lm")
 linear_model_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
-  data = df)
+  data = wine_train)
 linear_model_workflow <- workflow() |> add_model(linear_model) |> 
   add_recipe(linear_model_recipe)
 linear_model_workflow
@@ -120,7 +120,7 @@ linear_model_workflow
 knn_model <- nearest_neighbor(neighbors = tune()) |> 
   set_mode("regression") |> set_engine("kknn")
 knn_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
-  data = df) |> step_normalize(all_predictors())
+  data = wine_train) |> step_normalize(all_predictors())
 knn_workflow <- workflow() |> add_model(knn_model) |> 
   add_recipe(knn_recipe)
 knn_workflow
