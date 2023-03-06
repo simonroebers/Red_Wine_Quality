@@ -210,3 +210,12 @@ plot(graphLayout(dag))
 - Correlation does not equal causation
 - Similarities are assumed here for ease of application
 - I don’t have domain knowledge about wine, this is my best guess
+
+``` r
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/1_EDA.Rmd', '~/Red_Wine_Quality/9_R_Scripts/EDA.R',
+  documentation = 2, quiet = TRUE)
+```
+
+    ## [1] "~/Red_Wine_Quality/9_R_Scripts/EDA.R"
