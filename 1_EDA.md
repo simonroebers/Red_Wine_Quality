@@ -41,7 +41,7 @@ library(corrplot)
 
 ``` r
 library(dagitty)
-df <- read.csv('winequality-red.csv')
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
 glimpse(df)
 ```
 
@@ -214,8 +214,8 @@ plot(graphLayout(dag))
 ``` r
 # Export R Script
 library(knitr)
-knitr::purl('~/Red_Wine_Quality/1_EDA.Rmd', '~/Red_Wine_Quality/9_R_Scripts/EDA.R',
+knitr::purl('~/Red_Wine_Quality/9_R_Markdown/1_EDA.Rmd', '~/Red_Wine_Quality/9_R_Scripts/1_EDA.R',
   documentation = 2, quiet = TRUE)
 ```
 
-    ## [1] "~/Red_Wine_Quality/9_R_Scripts/EDA.R"
+    ## [1] "~/Red_Wine_Quality/9_R_Scripts/1_EDA.R"
