@@ -1,0 +1,107 @@
+#' ---
+#' title: '5 Neural Network Prediction'
+#' knit: (function(inputFile, encoding) { 
+#'       out_dir <- '~/Red_Wine_Quality/';
+#'       rmarkdown::render(inputFile,
+#'                         encoding=encoding, 
+#'                         output_file='5_Neural_Network.md') })
+#' output:
+#'   github_document:
+#'     toc: true
+#'     toc_depth: 2
+#' ---
+#' 
+#' # Load packages and data
+## -----------------------------------------------------------------------------
+library(tidymodels)
+library(neuralnet)
+library(doParallel)
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
+glimpse(df)
+
+#' 
+#' # Create train split, test split and cross validation
+## -----------------------------------------------------------------------------
+set.seed(1)
+wine_split <- initial_split(df, prop = 0.7)
+wine_split
+
+wine_train <- training(wine_split)
+wine_test  <- testing(wine_split)
+
+cv_folds <- wine_train |> vfold_cv(v = 5)
+
+#' 
+#' - Data set is split into 70% training data and 30% test data
+#' - Training data is divided into 3-fold cross validation
+#' 
+#' # Neural Network
+#' ## Set model and workflow
+## -----------------------------------------------------------------------------
+neural_network <- mlp(hidden_units = tune()) |>  
+  set_engine("nnet") |> set_mode("regression")
+neural_network_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
+  data = wine_train) |>  step_normalize(all_predictors())
+neural_network_workflow <- workflow() |>  add_recipe(neural_network_recipe) |>  
+  add_model(neural_network)
+
+#' 
+#' - Neural net model is defined and combined into a workflow
+#' - Variables are normalized to not bias distance calculations of the model
+#' - The number of hidden units will be tuned with cross validation
+#' 
+#' ## Tune model
+## -----------------------------------------------------------------------------
+tune_grid <- tibble(hidden_units = 1:10)
+registerDoParallel()
+neural_net_tune <- tune_grid(neural_network_workflow, resamples = cv_folds,
+  grid = tune_grid, metrics = metric_set(rmse, mae))
+
+#' 
+#' - Tune grid is defined as 1-10 hidden units in the first layer
+#' - Grid search is performed to evaluate model performance with different hyper parameters
+#' 
+#' ## Evaluation of tuning results
+## -----------------------------------------------------------------------------
+neural_net_tune %>% collect_metrics() %>%
+  ggplot(aes(x = hidden_units, y = mean, ymin = mean - std_err, ymax = mean + std_err, 
+             colour = .metric)) +
+  geom_errorbar() + geom_line() + geom_point() +
+  facet_wrap(~ .metric, scales = "free_y")
+neural_net_tune |> show_best("rmse", n = 5) 
+neural_net_selected <- select_by_one_std_err(neural_net_tune, metric = "rmse", hidden_units)
+neural_net_selected
+neural_net_workflow_final <- finalize_workflow(neural_network_workflow, neural_net_selected)
+neural_net_workflow_final
+
+#' 
+#' - Adding a second hidden unit provides biggest improvement
+#' - Parameter is chosen according to one-standard-error rule, to keep the model simple
+#' - Two hidden units are selected to finalize the workflow
+#' 
+#' # Visualize final model
+## -----------------------------------------------------------------------------
+nn_model <- neuralnet(quality ~ alcohol + sulphates + volatile.acidity, data = wine_train, 
+  hidden = neural_net_selected$hidden_units, rep = 10, threshold = 0.1) 
+plot(nn_model, rep = "best")
+
+#' 
+#' # Determine model performance
+## -----------------------------------------------------------------------------
+neural_network_last_fit <- neural_net_workflow_final |> 
+  last_fit(wine_split, metrics = metric_set(rmse, mae))
+neural_network_metrics <- neural_network_last_fit |> collect_metrics()
+neural_network_metrics
+stopImplicitCluster()
+
+#' 
+#' - Model does not perform noticeably better, while being significantly more complex than linear regression or kNN
+#' - Adding more hidden layers could provide further performance, however brings additional complexity
+#' 
+## -----------------------------------------------------------------------------
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/1_R_Markdown/5_Neural_Network.Rmd', 
+            '~/Red_Wine_Quality/2_R_Scripts/5_Neural_Network.R',
+  documentation = 2, quiet = TRUE)
+

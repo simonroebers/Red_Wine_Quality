@@ -1,4 +1,4 @@
-5 Neural Net Prediction
+5 Neural Network Prediction
 ================
 
 - <a href="#load-packages-and-data" id="toc-load-packages-and-data">Load
@@ -39,7 +39,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Use suppressPackageStartupMessages() to eliminate package startup messages
+    ## • Use tidymodels_prefer() to resolve common conflicts.
 
 ``` r
 library(neuralnet)
@@ -70,7 +70,7 @@ library(doParallel)
     ## Loading required package: parallel
 
 ``` r
-df <- read.csv('winequality-red.csv')
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
 glimpse(df)
 ```
 
@@ -151,7 +151,7 @@ neural_net_tune %>% collect_metrics() %>%
   facet_wrap(~ .metric, scales = "free_y")
 ```
 
-![](5_Neural_Net_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](5_Neural_Network_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 neural_net_tune |> show_best("rmse", n = 5) 
@@ -211,7 +211,7 @@ nn_model <- neuralnet(quality ~ alcohol + sulphates + volatile.acidity, data = w
 plot(nn_model, rep = "best")
 ```
 
-![](5_Neural_Net_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](5_Neural_Network_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Determine model performance
 
@@ -232,6 +232,17 @@ neural_network_metrics
 stopImplicitCluster()
 ```
 
-- Model does not perform better than simple linear regression or kNN
+- Model does not perform noticeably better, while being significantly
+  more complex than linear regression or kNN
 - Adding more hidden layers could provide further performance, however
-  brings a lot of model complexity
+  brings additional complexity
+
+``` r
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/1_R_Markdown/5_Neural_Network.Rmd', 
+            '~/Red_Wine_Quality/2_R_Scripts/5_Neural_Network.R',
+  documentation = 2, quiet = TRUE)
+```
+
+    ## [1] "~/Red_Wine_Quality/2_R_Scripts/5_Neural_Network.R"
