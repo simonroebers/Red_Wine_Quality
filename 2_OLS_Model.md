@@ -35,7 +35,7 @@ library(stargazer)
 
 ``` r
 library(lm.beta)
-df <- read.csv('winequality-red.csv')
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
 glimpse(df)
 ```
 
@@ -157,3 +157,13 @@ summary(lm.beta(model2))
 
 - Standardizing coefficients allows for direct comparison of effect size
 - Alcohol seems to have the highest direct impact on quality
+
+``` r
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/9_R_Markdown/2_OLS_Model.Rmd', 
+            '~/Red_Wine_Quality/9_R_Scripts/2_OLS_Model.R',
+  documentation = 2, quiet = TRUE)
+```
+
+    ## [1] "~/Red_Wine_Quality/9_R_Scripts/2_OLS_Model.R"

@@ -1,0 +1,52 @@
+#' ---
+#' title: "2 OLS Regression Model"
+#' knit: (function(inputFile, encoding) { 
+#'       out_dir <- '~/Red_Wine_Quality/';
+#'       rmarkdown::render(inputFile,
+#'                         encoding=encoding, 
+#'                         output_file='2_OLS_Model.md') })
+#' output:
+#'   github_document:
+#'     toc: true
+#'     toc_depth: 2
+#' ---
+#' 
+#' # Load packages and data
+## -----------------------------------------------------------------------------
+library(tidyverse)
+library(stargazer)
+library(lm.beta)
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
+glimpse(df)
+
+#' 
+#' # OLS Models
+## -----------------------------------------------------------------------------
+model1 <- lm(quality ~ alcohol + sulphates + citric.acid + 
+  volatile.acidity, data=df)
+model2 <- lm(quality ~ alcohol + sulphates + citric.acid + volatile.acidity + 
+  sulphates*citric.acid + citric.acid*alcohol + citric.acid*volatile.acidity
+  , data=df)
+stargazer(model1, model2, intercept.bottom=FALSE, type='text')
+
+#' 
+#' - Base model without interaction effects shows that citric acid does not have a statistically significant impact on quality
+#' - Second model indicates that interactions of citric acid with sulphates and alcohol are significant
+#' - Model performance does however not increase meaningfully
+#' - Around 33 % of variation in quality can be described with these regressions
+#' 
+#' # Standardized Regression Coefficients
+## -----------------------------------------------------------------------------
+summary(lm.beta(model2))
+
+#' 
+#' - Standardizing coefficients allows for direct comparison of effect size
+#' - Alcohol seems to have the highest direct impact on quality
+#' 
+## -----------------------------------------------------------------------------
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/9_R_Markdown/2_OLS_Model.Rmd', 
+            '~/Red_Wine_Quality/9_R_Scripts/2_OLS_Model.R',
+  documentation = 2, quiet = TRUE)
+
