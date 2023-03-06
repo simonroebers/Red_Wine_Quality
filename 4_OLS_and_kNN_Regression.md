@@ -42,10 +42,10 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Use suppressPackageStartupMessages() to eliminate package startup messages
+    ## • Dig deeper into tidy modeling with R at https://www.tmwr.org
 
 ``` r
-df <- read.csv('winequality-red.csv')
+df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
 glimpse(df)
 ```
 
@@ -225,3 +225,13 @@ linear_model_metrics |> bind_rows(knn_metrics) |>
 - K-nearest neighbors is the better model
   - Lower errors of predictions
   - It can explain more variation of the dependent variable
+
+``` r
+# Export R Script
+library(knitr)
+knitr::purl('~/Red_Wine_Quality/1_R_Markdown/4_OLS_and_kNN_Regression.Rmd', 
+            '~/Red_Wine_Quality/2_R_Scripts/4_OLS_and_kNN_Regression.R',
+  documentation = 2, quiet = TRUE)
+```
+
+    ## [1] "~/Red_Wine_Quality/2_R_Scripts/4_OLS_and_kNN_Regression.R"
