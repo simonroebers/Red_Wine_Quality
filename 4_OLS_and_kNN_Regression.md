@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Use tidymodels_prefer() to resolve common conflicts.
+    ## • Use suppressPackageStartupMessages() to eliminate package startup messages
 
 ``` r
 df <- read.csv('winequality-red.csv')
