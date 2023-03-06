@@ -24,7 +24,7 @@ wine_split
 wine_train <- training(wine_split)
 wine_test  <- testing(wine_split)
 
-cv_folds <- wine_train |> vfold_cv(v = 3)
+cv_folds <- wine_train |> vfold_cv(v = 5)
 ```
 
 - Data set is split into 70% training data and 30% test data
@@ -33,36 +33,10 @@ cv_folds <- wine_train |> vfold_cv(v = 3)
 # Neural Network
 ## Set model and workflow
 ```{r}
-# neural_network <- mlp(hidden_units = tune(), epochs = 7500, activation = "relu") |> 
-#   set_engine("keras", verbose = 0, batch_size = 32, metrics = c("mse", "mae")) |> 
-#   set_mode("regression")
-# neural_network_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
-#   data = df) |>  step_normalize(all_predictors())
-# neural_network_workflow <- workflow() |>  add_recipe(neural_network_recipe) |>  
-#   add_model(neural_network)
-```
-
-- Neural net model is defined and combined into a workflow
-- Variables are normalized to not bias distance calculations of the model
-- The number of hidden units will be tuned with cross validation
-
-## Tune model
-```{r}
-# tune_grid <- tibble(hidden_units = 3:4)
-# neural_net_tune <- tune_grid(neural_network_workflow, resamples = cv_folds,
-#   grid = tune_grid, metrics = metric_set(rmse, mae),
-#   control = control_grid(verbose = FALSE)
-# )
-```
-
-# Neural Network
-## Set model and workflow
-```{r}
-neural_network <- neuralnet(hidden = tune()) |>  
-  # mlp(hidden_units = tune()) |>  
+neural_network <- mlp(hidden_units = tune()) |>  
   set_engine("nnet") |> set_mode("regression")
 neural_network_recipe <- recipe(quality ~ alcohol + sulphates + volatile.acidity,
-  data = df) |>  step_normalize(all_predictors())
+  data = wine_train) |>  step_normalize(all_predictors())
 neural_network_workflow <- workflow() |>  add_recipe(neural_network_recipe) |>  
   add_model(neural_network)
 ```
@@ -73,12 +47,14 @@ neural_network_workflow <- workflow() |>  add_recipe(neural_network_recipe) |>
 
 ## Tune model
 ```{r}
-tune_grid <- tibble(hidden = 1:10)
-# tune_grid <- tibble(hidden_units = 1:10)
+tune_grid <- tibble(hidden_units = 1:10)
 registerDoParallel()
 neural_net_tune <- tune_grid(neural_network_workflow, resamples = cv_folds,
-  grid = tune_grid, metrics = metric_set(rmse, mae, rsq_trad))
+  grid = tune_grid, metrics = metric_set(rmse, mae))
 ```
+
+- Tune grid is defined as 1-10 hidden units in the first layer
+- Grid search is performed to evaluate model performance with different hyper parameters
 
 ## Evaluation of tuning results
 ```{r}
@@ -94,9 +70,25 @@ neural_net_workflow_final <- finalize_workflow(neural_network_workflow, neural_n
 neural_net_workflow_final
 ```
 
+- Adding a second hidden unit provides biggest improvement
+- Parameter is chosen according to one-standard-error rule, to keep the model simple
+- Two hidden units are selected to finalize the workflow
+
+# Visualize final model
+```{r}
+nn_model <- neuralnet(quality ~ alcohol + sulphates + volatile.acidity, data = wine_train, 
+  hidden = neural_net_selected$hidden_units, rep = 10, threshold = 0.1) 
+plot(nn_model, rep = "best")
+```
+
 # Determine model performance
 ```{r}
-
+neural_network_last_fit <- neural_net_workflow_final |> 
+  last_fit(wine_split, metrics = metric_set(rmse, mae))
+neural_network_metrics <- neural_network_last_fit |> collect_metrics()
+neural_network_metrics
 stopImplicitCluster()
 ```
 
+- Model does not perform better than simple linear regression or kNN
+- Adding more hidden layers could provide further performance, however brings a lot of model complexity
