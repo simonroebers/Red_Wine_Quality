@@ -42,7 +42,7 @@ library(tidymodels)
     ## ✖ dplyr::filter()  masks stats::filter()
     ## ✖ dplyr::lag()     masks stats::lag()
     ## ✖ recipes::step()  masks stats::step()
-    ## • Dig deeper into tidy modeling with R at https://www.tmwr.org
+    ## • Search for functions across packages at https://www.tidymodels.org/find/
 
 ``` r
 df <- read.csv('~/Red_Wine_Quality/winequality-red.csv')
@@ -229,9 +229,9 @@ linear_model_metrics |> bind_rows(knn_metrics) |>
 ``` r
 # Export R Script
 library(knitr)
-knitr::purl('~/Red_Wine_Quality/1_R_Markdown/4_OLS_and_kNN_Regression.Rmd', 
-            '~/Red_Wine_Quality/2_R_Scripts/4_OLS_and_kNN_Regression.R',
+knitr::purl('~/Red_Wine_Quality/6_R_Markdown/4_OLS_and_kNN_Regression.Rmd', 
+            '~/Red_Wine_Quality/7_R_Scripts/4_OLS_and_kNN_Regression.R',
   documentation = 2, quiet = TRUE)
 ```
 
-    ## [1] "~/Red_Wine_Quality/2_R_Scripts/4_OLS_and_kNN_Regression.R"
+    ## [1] "~/Red_Wine_Quality/7_R_Scripts/4_OLS_and_kNN_Regression.R"
