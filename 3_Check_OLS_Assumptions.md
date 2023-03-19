@@ -334,9 +334,9 @@ vif(mod=model3)
 ``` r
 # Export R Script
 library(knitr)
-knitr::purl('~/Red_Wine_Quality/1_R_Markdown/3_Check_OLS_Assumptions.Rmd', 
-            '~/Red_Wine_Quality/2_R_Scripts/3_Check_OLS_Assumptions.R',
+knitr::purl('~/Red_Wine_Quality/6_R_Markdown/3_Check_OLS_Assumptions.Rmd', 
+            '~/Red_Wine_Quality/7_R_Scripts/3_Check_OLS_Assumptions.R',
   documentation = 2, quiet = TRUE)
 ```
 
-    ## [1] "~/Red_Wine_Quality/2_R_Scripts/3_Check_OLS_Assumptions.R"
+    ## [1] "~/Red_Wine_Quality/7_R_Scripts/3_Check_OLS_Assumptions.R"
