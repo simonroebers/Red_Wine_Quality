@@ -101,7 +101,7 @@ stopImplicitCluster()
 ```{r}
 # Export R Script
 library(knitr)
-knitr::purl('~/Red_Wine_Quality/1_R_Markdown/5_Neural_Network.Rmd', 
-            '~/Red_Wine_Quality/2_R_Scripts/5_Neural_Network.R',
+knitr::purl('~/Red_Wine_Quality/6_R_Markdown/5_Neural_Network.Rmd', 
+            '~/Red_Wine_Quality/7_R_Scripts/5_Neural_Network.R',
   documentation = 2, quiet = TRUE)
 ```
